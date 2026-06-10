@@ -36,7 +36,7 @@ window#main-window {
     background-color: rgba(255,255,255,0.07);
     border: 1.5px solid rgba(255,255,255,0.12);
     border-radius: 12px;
-    color: #F0EDE8;
+    color: #EDEAE4;
     font-size: 15px;
     padding: 10px 16px;
     caret-color: #E86A58;
@@ -95,7 +95,7 @@ window#main-window {
 }
 
 .cmd-mono {
-    color: #F0EDE8;
+    color: #EDEAE4;
     font-family: "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
     font-size: 13px;
     font-weight: 500;
@@ -149,6 +149,24 @@ scrollbar slider {
     background-color: rgba(255,255,255,0.12);
     border-radius: 4px;
     min-width: 4px;
+}
+/* ── 強制覆蓋系統主題白底 ── */
+list {
+    background-color: #1C1A15;
+    background-image: none;
+}
+listboxrow {
+    background-color: transparent;
+    background-image: none;
+}
+listboxrow:hover {
+    background-color: rgba(255,255,255,0.07);
+    background-image: none;
+}
+listboxrow:selected,
+listboxrow:selected:focus {
+    background-color: rgba(74,144,226,0.20);
+    background-image: none;
 }
 
 /* ── Footer ── */
@@ -294,10 +312,25 @@ class LauncherWindow(Gtk.Window):
         self.connect("draw",             self._on_draw)
 
     def _on_draw(self, widget, cr):
-        """繪製圓角背景（需要 compositing）"""
-        cr.set_source_rgba(0, 0, 0, 0)
-        cr.set_operator(1)  # CLEAR
-        cr.paint()
+        """畫圓角深色背景，不依賴 compositing"""
+        if not widget.get_realized():
+            return False
+        w = widget.get_allocated_width()
+        h = widget.get_allocated_height()
+        r = 18
+
+        cr.new_sub_path()
+        cr.arc(r,     r,     r, 3.14159, 3.0*3.14159/2)
+        cr.arc(w - r, r,     r, 3.0*3.14159/2, 0)
+        cr.arc(w - r, h - r, r, 0, 3.14159/2)
+        cr.arc(r,     h - r, r, 3.14159/2, 3.14159)
+        cr.close_path()
+
+        cr.set_source_rgb(0.086, 0.078, 0.059)
+        cr.fill_preserve()
+        cr.set_source_rgba(1, 1, 1, 0.08)
+        cr.set_line_width(1)
+        cr.stroke()
         return False
 
     def _apply_css(self):
@@ -305,7 +338,7 @@ class LauncherWindow(Gtk.Window):
         p.load_from_data(CSS.encode("utf-8"))
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(), p,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            Gtk.STYLE_PROVIDER_PRIORITY_USER
         )
 
     # ── UI 建構 ───────────────────────────────────────────
