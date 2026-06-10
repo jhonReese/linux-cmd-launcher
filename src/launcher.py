@@ -96,9 +96,10 @@ def main():
     tray = _try_appindicator(window)
 
     print(f"✅ CMD Launcher v{__version__} is running.")
-    print("   Shortcut : Super + O")
+    print("   Shortcut : Ctrl + Alt + O")
     print("   Quit     : Ctrl + C  or tray → Quit\n")
 
+    window.show_all()
     try:
         Gtk.main()
     except KeyboardInterrupt:

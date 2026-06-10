@@ -1,7 +1,7 @@
 """
 全域快捷鍵監聽模組
-監聽 Super+O，不記錄任何其他按鍵（隱私安全）
-[[3]](#__3) (stackoverflow GTK global hotkey)
+監聽 Ctrl+Alt+O（WSL/X11 相容版本）
+Super 鍵在 WSL 會被 Windows 攔截，改用 Ctrl+Alt+O
 """
 from pynput import keyboard
 from typing import Callable, Set
@@ -10,23 +10,29 @@ import threading
 
 class HotkeyListener:
     """
-    監聽 Super (Windows/Meta) + O。
+    監聽 Ctrl + Alt + O。
     - 只追蹤目標組合鍵，不記錄其他任何輸入
     - daemon thread，主程式結束自動清理
-    - 支援 Linux X11 / Wayland
+    - 支援 WSL / Linux X11 / Wayland
     """
-    TARGET_COMBO = {keyboard.Key.cmd, keyboard.KeyCode.from_char('o')}
+    TARGET_COMBO = {
+        keyboard.Key.ctrl,
+        keyboard.Key.alt,
+        keyboard.KeyCode.from_char('o')
+    }
 
     def __init__(self, callback: Callable):
         self.callback   = callback
         self._pressed:  Set = set()
         self._lock      = threading.Lock()
-        self._triggered = False   # 防止長按觸發多次
+        self._triggered = False
         self._listener  = None
 
     def _normalize(self, key):
-        if key in (keyboard.Key.cmd_l, keyboard.Key.cmd_r):
-            return keyboard.Key.cmd
+        if key in (keyboard.Key.ctrl_l, keyboard.Key.ctrl_r):
+            return keyboard.Key.ctrl
+        if key in (keyboard.Key.alt_l, keyboard.Key.alt_r, keyboard.Key.alt_gr):
+            return keyboard.Key.alt
         return key
 
     def _on_press(self, key):
@@ -43,7 +49,7 @@ class HotkeyListener:
             norm = self._normalize(key)
             self._pressed.discard(norm)
             if norm in self.TARGET_COMBO:
-                self._triggered = False   # 重置，允許下次觸發
+                self._triggered = False
 
     def start(self):
         self._listener = keyboard.Listener(

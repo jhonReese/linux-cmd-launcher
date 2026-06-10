@@ -20,7 +20,7 @@ from src.core.clipboard import copy_to_clipboard, run_in_terminal
 
 
 # ── CSS 樣式（整合原 styles.css）────────────────────────────
-CSS = b"""
+CSS = """
 * {
     font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Ubuntu, sans-serif;
 }
@@ -280,7 +280,9 @@ class LauncherWindow(Gtk.Window):
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
 
         screen = Gdk.Screen.get_default()
-        self.move((screen.get_width()-720)//2, (screen.get_height()-580)//2)
+        def _center_window(w):
+            w.move((screen.get_width()-720)//2, (screen.get_height()-580)//2)
+        self.connect("realize", _center_window)
 
         visual = screen.get_rgba_visual()
         if visual:
@@ -300,7 +302,7 @@ class LauncherWindow(Gtk.Window):
 
     def _apply_css(self):
         p = Gtk.CssProvider()
-        p.load_from_data(CSS)
+        p.load_from_data(CSS.encode("utf-8"))
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(), p,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
@@ -378,7 +380,7 @@ class LauncherWindow(Gtk.Window):
         # ── Footer ──
         footer = Gtk.Label(name="footer")
         footer.set_markup(
-            '<span foreground="rgba(255,255,255,0.2)" font="10.5">'
+            '<span foreground="#999999" font="10.5">'
             'Super+O  Toggle  ·  Click row to copy  ·  Run ▶ opens terminal  ·  Esc close'
             '</span>'
         )

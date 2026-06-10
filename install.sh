@@ -67,7 +67,7 @@ python3 "$INSTALL_DIR/assets/generate_icon.py" 2>/dev/null || true
 # ── 5. 虛擬環境 ──────────────────────────────────────────
 echo ""
 echo "🐍 Setting up Python virtual environment..."
-python3 -m venv "$INSTALL_DIR/.venv"
+/usr/bin/python3.10 -m venv --system-site-packages "$INSTALL_DIR/.venv"
 "$INSTALL_DIR/.venv/bin/pip" install --quiet --upgrade pip
 "$INSTALL_DIR/.venv/bin/pip" install --quiet \
     pynput \
