@@ -4,6 +4,7 @@ A keyboard-driven command cheatsheet panel for Linux desktops.
 Press `Super + O` anywhere to bring up a searchable, dark-themed overlay of your personal command library — then dismiss it just as fast.
 
 Built for the kind of workflow where reaching for the mouse is already too slow.
+<img src="assets/screenshot-panel-final.png" width="720" alt="cmd-launcher panel" />
 
 ---
 
