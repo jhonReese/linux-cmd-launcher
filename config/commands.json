@@ -1,0 +1,120 @@
+{
+  "version": "1.0.0",
+  "categories": [
+    {
+      "name": "📁 File & Directory",
+      "color": "#4A90E2",
+      "commands": [
+        { "cmd": "ls -la",           "desc": "List all files with details" },
+        { "cmd": "pwd",              "desc": "Print working directory" },
+        { "cmd": "cd ~",             "desc": "Go to home directory" },
+        { "cmd": "mkdir -p dir/sub", "desc": "Create nested directories" },
+        { "cmd": "rm -rf dir/",      "desc": "Remove directory recursively" },
+        { "cmd": "cp -r src/ dst/",  "desc": "Copy directory recursively" },
+        { "cmd": "mv old new",       "desc": "Move or rename file" },
+        { "cmd": "find . -name '*.py'", "desc": "Find files by name" },
+        { "cmd": "du -sh *",         "desc": "Show directory sizes" },
+        { "cmd": "tree -L 2",        "desc": "Show directory tree (depth 2)" }
+      ]
+    },
+    {
+      "name": "🔍 Search & Text",
+      "color": "#E86A58",
+      "commands": [
+        { "cmd": "grep -rn 'pattern' .", "desc": "Recursive search with line numbers" },
+        { "cmd": "grep -i 'text' file",  "desc": "Case-insensitive search" },
+        { "cmd": "sed -i 's/old/new/g' file", "desc": "Replace text in file" },
+        { "cmd": "awk '{print $1}' file",     "desc": "Print first column" },
+        { "cmd": "sort -u file",         "desc": "Sort and remove duplicates" },
+        { "cmd": "wc -l file",           "desc": "Count lines in file" },
+        { "cmd": "cat file | head -20",  "desc": "Show first 20 lines" },
+        { "cmd": "tail -f log.txt",      "desc": "Follow log file in real-time" },
+        { "cmd": "diff file1 file2",     "desc": "Compare two files" }
+      ]
+    },
+    {
+      "name": "⚙️ Process & System",
+      "color": "#F2A65A",
+      "commands": [
+        { "cmd": "ps aux | grep name",   "desc": "Find process by name" },
+        { "cmd": "kill -9 PID",          "desc": "Force kill process" },
+        { "cmd": "top",                  "desc": "Real-time process monitor" },
+        { "cmd": "htop",                 "desc": "Interactive process viewer" },
+        { "cmd": "df -h",                "desc": "Disk usage (human readable)" },
+        { "cmd": "free -h",              "desc": "Memory usage" },
+        { "cmd": "uname -a",             "desc": "System information" },
+        { "cmd": "uptime",               "desc": "System uptime & load" },
+        { "cmd": "lscpu",                "desc": "CPU information" },
+        { "cmd": "systemctl status svc", "desc": "Check service status" }
+      ]
+    },
+    {
+      "name": "🌐 Network",
+      "color": "#7ED321",
+      "commands": [
+        { "cmd": "curl -I https://url",  "desc": "HTTP headers only" },
+        { "cmd": "wget -O file url",     "desc": "Download file" },
+        { "cmd": "ss -tulnp",            "desc": "Show listening ports" },
+        { "cmd": "netstat -an",          "desc": "All network connections" },
+        { "cmd": "ping -c 4 host",       "desc": "Ping host 4 times" },
+        { "cmd": "traceroute host",      "desc": "Trace network route" },
+        { "cmd": "nmap -sV host",        "desc": "Scan open ports & versions" },
+        { "cmd": "ip addr show",         "desc": "Show IP addresses" },
+        { "cmd": "ssh user@host",        "desc": "SSH connect to host" },
+        { "cmd": "scp file user@host:~", "desc": "Copy file via SSH" }
+      ]
+    },
+    {
+      "name": "🐳 Docker",
+      "color": "#0DB7ED",
+      "commands": [
+        { "cmd": "docker ps -a",                    "desc": "List all containers" },
+        { "cmd": "docker images",                   "desc": "List all images" },
+        { "cmd": "docker build -t name .",          "desc": "Build image from Dockerfile" },
+        { "cmd": "docker run -it --rm name bash",   "desc": "Run container interactively" },
+        { "cmd": "docker-compose up -d",            "desc": "Start services in background" },
+        { "cmd": "docker-compose down -v",          "desc": "Stop & remove volumes" },
+        { "cmd": "docker logs -f container",        "desc": "Follow container logs" },
+        { "cmd": "docker exec -it container bash",  "desc": "Enter running container" },
+        { "cmd": "docker system prune -af",         "desc": "Remove all unused resources" }
+      ]
+    },
+    {
+      "name": "🔀 Git",
+      "color": "#F05033",
+      "commands": [
+        { "cmd": "git log --oneline --graph",       "desc": "Visual commit history" },
+        { "cmd": "git stash pop",                   "desc": "Apply latest stash" },
+        { "cmd": "git reset --hard HEAD~1",         "desc": "Undo last commit (destructive)" },
+        { "cmd": "git rebase -i HEAD~3",            "desc": "Interactive rebase last 3" },
+        { "cmd": "git cherry-pick HASH",            "desc": "Apply specific commit" },
+        { "cmd": "git diff --staged",               "desc": "Show staged changes" },
+        { "cmd": "git branch -d branch",            "desc": "Delete local branch" },
+        { "cmd": "git remote -v",                   "desc": "Show remote URLs" }
+      ]
+    },
+    {
+      "name": "🐍 Python / pip",
+      "color": "#3776AB",
+      "commands": [
+        { "cmd": "python3 -m venv .venv",           "desc": "Create virtual environment" },
+        { "cmd": "source .venv/bin/activate",       "desc": "Activate venv" },
+        { "cmd": "pip install -r requirements.txt", "desc": "Install dependencies" },
+        { "cmd": "pip freeze > requirements.txt",   "desc": "Export dependencies" },
+        { "cmd": "python3 -m http.server 8080",     "desc": "Quick HTTP server" },
+        { "cmd": "python3 -c 'import sys; print(sys.path)'", "desc": "Show Python path" }
+      ]
+    },
+    {
+      "name": "🔐 Permissions",
+      "color": "#9B59B6",
+      "commands": [
+        { "cmd": "chmod +x script.sh",    "desc": "Make file executable" },
+        { "cmd": "chmod 755 file",        "desc": "rwxr-xr-x permissions" },
+        { "cmd": "chown user:group file", "desc": "Change file owner" },
+        { "cmd": "sudo !!",               "desc": "Re-run last cmd as sudo" },
+        { "cmd": "visudo",                "desc": "Edit sudoers safely" }
+      ]
+    }
+  ]
+}

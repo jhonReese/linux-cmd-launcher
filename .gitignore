@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# 個人設定（不上傳）
+config/user_config.json
+*.env
+.env.*
+secrets.json
+
+# 系統檔案
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.log
+
+# 安裝產生的檔案
+assets/icon.png
