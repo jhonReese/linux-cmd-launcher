@@ -1,5 +1,5 @@
 # cmd-launcher
-
+![demo1](assets/demo1.gif)
 > **One-key command cheatsheet for Linux & WSLg.**
 > Press `Ctrl+Alt+O` (WSL/WSLg) or `Super+O` (native Linux) to instantly pop up
 > a fuzzy-searchable, keyboard-navigable command palette — no mouse required.
@@ -24,17 +24,16 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.
 
 ---
 
-![demo1](assets/demo1.gif)
-![demo2](assets/demo2.gif)
-![demo3](assets/demo3.gif)
-![demo4](assets/demo4.gif)
-
 - 🚀 **One-key toggle** — `Ctrl+Alt+O` (WSL) / `Super+O` (native Linux)
 - ⌨️ **Full keyboard navigation** — `↑↓` move through results; never leave the keyboard
+  
 - 🔍 **Fuzzy + multi-word search** — typos and partial queries both work
+![demo3](assets/demo3.gif)
 - 📋 **Enter to copy** — copies highlighted command to clipboard instantly
 - ▶️ **Shift+Enter to run** — opens command directly in your terminal
+- 
 - 🕐 **Recent tab** — tracks your last 8 used commands
+![demo2](assets/demo2.gif)
 - 🎨 **Apple × DeepMind aesthetic** — dark glass UI, high-contrast text, color-coded categories
 - 📝 **Fully customizable** — edit `~/.config/cmd-launcher/commands.json`
 - 🔒 **Privacy-first** — no keylogging beyond `Ctrl+Alt+O`, no network, no data collection
