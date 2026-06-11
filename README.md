@@ -25,7 +25,7 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.
 
 ---
 
-<img src="assets/image.png" width="720" alt="cmd-launcher panel" />
+<img src="assets/image2.png" width="720" alt="cmd-launcher panel" />
 
 - 🚀 **One-key toggle** — `Ctrl+Alt+O` (WSL) / `Super+O` (native Linux)
 - ⌨️ **Full keyboard navigation** — `↑↓` move through results; never leave the keyboard
