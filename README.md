@@ -1,3 +1,4 @@
+<img src="assets/image1.png" width="720" alt="cmd-launcher panel" />
 # cmd-launcher
 
 > **One-key command cheatsheet for Linux & WSLg.**
