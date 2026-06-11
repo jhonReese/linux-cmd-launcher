@@ -1,6 +1,10 @@
 ![demo](assets/demo.gif)
 # cmd-launcher
 
+**You know the command exists. You just can't remember the exact flags.
+Ctrl+Alt+O — panel opens. Type. Copy. Done.**
+
+
 > **One-key command cheatsheet for Linux & WSLg.**
 > Press `Ctrl+Alt+O` (WSL/WSLg) or `Super+O` (native Linux) to instantly pop up
 > a fuzzy-searchable, keyboard-navigable command palette — no mouse required.
