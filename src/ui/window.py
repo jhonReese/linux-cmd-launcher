@@ -9,6 +9,7 @@ gi.require_version("Gdk", "3.0")
 from gi.repository import Gtk, Gdk, GLib, Pango
 
 import sys
+import math
 import subprocess
 import threading
 from pathlib import Path
@@ -200,6 +201,18 @@ listboxrow:selected:focus {
     background-image: none;
 }
 
+/* ── Pin button ── */
+.btn-pin {
+    color: #6E6A65;
+    font-size: 13px;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+.btn-pin.active {
+    background-color: #2A3A20;
+    color: #34C759;
+}
+
 /* ── Footer ── */
 #footer {
     color: #6E6A65;
@@ -347,14 +360,17 @@ class LauncherWindow(Gtk.Window):
         def _center_window(w):
             w.move((screen.get_width()-760)//2, (screen.get_height()-620)//2)
         self.connect("realize", _center_window)
+        self.connect("realize",        lambda *_: GLib.timeout_add(80, self._setup_shape))
+        self.connect("configure-event", lambda *_: GLib.idle_add(self._setup_shape))
 
         visual = screen.get_rgba_visual()
         if visual:
             self.set_visual(visual)
         self.set_app_paintable(True)
 
+        self._pinned = False
         self.connect("key-press-event",  self._on_key)
-        self.connect("focus-out-event",  lambda *_: self.hide())
+        self.connect("focus-out-event",  self._on_focus_out)
 
     def _apply_css(self):
         p = Gtk.CssProvider()
@@ -363,6 +379,33 @@ class LauncherWindow(Gtk.Window):
             Gdk.Screen.get_default(), p,
             Gtk.STYLE_PROVIDER_PRIORITY_USER
         )
+
+    def _setup_shape(self):
+        """Clip window to a rounded rectangle using X11 shape extension.
+        Works without a compositor — no alpha blending needed."""
+        gdk_win = self.get_window()
+        if gdk_win is None:
+            return False
+        w, h = self.get_size()   # actual window size, not layout allocation
+        if w < 2 or h < 2:
+            return False
+        try:
+            import cairo as _cairo
+            r = 14
+            surf = _cairo.ImageSurface(_cairo.Format.A8, w, h)
+            ctx  = _cairo.Context(surf)
+            ctx.set_source_rgba(1, 1, 1, 1)
+            ctx.arc(r,     r,     r, math.pi,       3 * math.pi / 2)
+            ctx.arc(w - r, r,     r, -math.pi / 2,  0)
+            ctx.arc(w - r, h - r, r, 0,              math.pi / 2)
+            ctx.arc(r,     h - r, r, math.pi / 2,   math.pi)
+            ctx.close_path()
+            ctx.fill()
+            region = Gdk.cairo_region_create_from_surface(surf)
+            gdk_win.shape_combine_region(region, 0, 0)
+        except Exception:
+            pass  # cairo unavailable or WSLg quirk — fall back to CSS radius
+        return False
 
     # ── UI 建構 ───────────────────────────────────────────
     def _build_ui(self):
@@ -388,6 +431,13 @@ class LauncherWindow(Gtk.Window):
         self._count_lbl = Gtk.Label(label="")
         self._count_lbl.set_name("count-lbl")
         hdr.pack_start(self._count_lbl, False, False, 8)
+
+        self._pin_btn = Gtk.Button(label="📌")
+        self._pin_btn.set_relief(Gtk.ReliefStyle.NONE)
+        self._pin_btn.get_style_context().add_class("btn-pin")
+        self._pin_btn.connect("clicked", self._toggle_pin)
+        self._pin_btn.set_tooltip_text("Pin — stay visible when focus leaves")
+        hdr.pack_end(self._pin_btn, False, False, 0)
 
         close = Gtk.Button(label="✕")
         close.set_relief(Gtk.ReliefStyle.NONE)
@@ -569,6 +619,19 @@ class LauncherWindow(Gtk.Window):
                 self._scroll_adj.set_value(max(0, alloc.y - 60))
             return False
         GLib.idle_add(_scroll_to)
+
+    # ── Pin ───────────────────────────────────────────────
+    def _toggle_pin(self, *_):
+        self._pinned = not self._pinned
+        ctx = self._pin_btn.get_style_context()
+        if self._pinned:
+            ctx.add_class("active")
+        else:
+            ctx.remove_class("active")
+
+    def _on_focus_out(self, widget, event):
+        if not self._pinned:
+            self.hide()
 
     # ── 事件處理 ──────────────────────────────────────────
     def _on_search(self, entry):
