@@ -32,6 +32,9 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.
 - 🔍 **Fuzzy + multi-word search** — typos and partial queries both work
 - 📋 **Enter to copy** — copies highlighted command to clipboard instantly
 - ▶️ **Shift+Enter to run** — opens command directly in your terminal
+
+
+<img src="assets/image1.png" width="720" alt="cmd-launcher panel" />
 - 🕐 **Recent tab** — tracks your last 8 used commands
 - 🎨 **Apple × DeepMind aesthetic** — dark glass UI, high-contrast text, color-coded categories
 - 📝 **Fully customizable** — edit `~/.config/cmd-launcher/commands.json`
