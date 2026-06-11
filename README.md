@@ -71,7 +71,7 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.**
 ## Why
 
 Terminal muscle memory has limits. I kept a text file of commands I use across ML experiments, git workflows, and system maintenance — and I kept forgetting where it was. This is the structured version of that file, with a global hotkey and fuzzy search.
-
+- 肌肉記憶是有限的。我以前習慣把機器學習實驗、Git 工作流和系統維護中常用的Commends存在一個flie裡，但我老是忘記那個檔案放在哪。這就是那個檔案的結構化版本，並加入了global hotkey與Fuzzy search功能。
 ---
 
 ## Features
