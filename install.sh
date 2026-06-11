@@ -78,7 +78,17 @@ python3 "$INSTALL_DIR/assets/generate_icon.py" 2>/dev/null || true
 # ── 5. 虛擬環境 ──────────────────────────────────────────
 echo ""
 echo "🐍 Setting up Python virtual environment..."
-/usr/bin/python3.10 -m venv --system-site-packages "$INSTALL_DIR/.venv"
+PYTHON3_BIN=$(command -v python3.12 2>/dev/null \
+    || command -v python3.11 2>/dev/null \
+    || command -v python3.10 2>/dev/null \
+    || command -v python3.9  2>/dev/null \
+    || command -v python3    2>/dev/null || true)
+if [ -z "$PYTHON3_BIN" ]; then
+    echo -e "${YELLOW}✗ Cannot find python3. Please install Python 3 before proceeding.${NC}" >&2
+    exit 1
+fi
+echo "   Using: $PYTHON3_BIN ($("$PYTHON3_BIN" --version))"
+"$PYTHON3_BIN" -m venv --system-site-packages "$INSTALL_DIR/.venv"
 "$INSTALL_DIR/.venv/bin/pip" install --quiet --upgrade pip
 "$INSTALL_DIR/.venv/bin/pip" install --quiet \
     pynput \
@@ -114,7 +124,7 @@ cat > "$AUTOSTART" << DESKTOP
 [Desktop Entry]
 Type=Application
 Name=CMD Launcher
-Comment=Linux Command Cheatsheet (Super+O)
+Comment=Linux Command Cheatsheet (Ctrl+Alt+O)
 Exec=$BIN_PATH
 Icon=$INSTALL_DIR/assets/icon.png
 Hidden=false
@@ -127,7 +137,7 @@ echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━
 echo "  ✅ Installation complete!"
 echo ""
 echo "  ▶  Run now  :  $APP_NAME"
-echo "  ⌨  Shortcut :  Super + O"
+echo "  ⌨  Shortcut :  Ctrl+Alt+O  (WSL) / Super+O  (native Linux)"
 echo "  📝 Config   :  $CFG_DIR/commands.json"
 echo "  🗑  Uninstall:  ./uninstall.sh"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

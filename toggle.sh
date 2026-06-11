@@ -1,6 +1,6 @@
 #!/bin/bash
-VENV="/home/wsl/.local/share/cmd-launcher/.venv"
-SRC="/home/wsl/.local/share/cmd-launcher/src"
+VENV="$HOME/.local/share/cmd-launcher/.venv"
+SRC="$HOME/.local/share/cmd-launcher/src"
 PIDFILE="/tmp/cmd-launcher.pid"
 LOGFILE="/tmp/cmd-launcher.log"
 
@@ -75,13 +75,23 @@ else
     PYCMD="$VENV/bin/python3"
 fi
 
+# Detect venv python version dynamically for PYTHONPATH
+if [ -x "$VENV/bin/python3" ]; then
+    VENV_PY_VER=$("$VENV/bin/python3" -c \
+        "import sys; print(f'python{sys.version_info.major}.{sys.version_info.minor}')" \
+        2>/dev/null || echo "python3")
+else
+    VENV_PY_VER="python3"
+fi
+VENV_SITE="$VENV/lib/$VENV_PY_VER/site-packages"
+
 nohup env -i \
     HOME=$HOME \
     PATH=/usr/bin:/bin \
     DISPLAY=$DISPLAY \
     WAYLAND_DISPLAY=$WAYLAND_DISPLAY \
     XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR \
-    PYTHONPATH="$SRC:/usr/lib/python3/dist-packages:$VENV/lib/python3.10/site-packages" \
+    PYTHONPATH="$SRC:/usr/lib/python3/dist-packages:$VENV_SITE" \
     "$PYCMD" -S \
     "$SRC/launcher.py" >> "$LOGFILE" 2>&1 &
 

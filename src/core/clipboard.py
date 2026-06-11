@@ -24,19 +24,48 @@ def copy_to_clipboard(text: str) -> bool:
 
 
 def run_in_terminal(cmd: str) -> bool:
-    """在新終端機視窗中執行指令（新增功能）"""
-    terminals = [
-        ["gnome-terminal", "--", "bash", "-c", f"{cmd}; exec bash"],
-        ["xterm",          "-e", f"bash -c '{cmd}; exec bash'"],
-        ["konsole",        "-e", f"bash -c '{cmd}; exec bash'"],
-        ["xfce4-terminal", "-e", f"bash -c '{cmd}; exec bash'"],
+    """在新終端機視窗中執行指令。"""
+    candidates = [
+        ["gnome-terminal", "--", "bash", "-ic", f"{cmd}; exec bash"],
+        ["konsole", "-e", "bash", "-ic", f"{cmd}; exec bash"],
+        ["xfce4-terminal", "-e", "bash", "-ic", f"{cmd}; exec bash"],
+        ["tilix", "-e", "bash", "-ic", f"{cmd}; exec bash"],
+        ["mate-terminal", "--", "bash", "-ic", f"{cmd}; exec bash"],
+        ["lxterminal", "-e", "bash", "-ic", f"{cmd}; exec bash"],
+        ["alacritty", "-e", "bash", "-lc", f"{cmd}; exec bash"],
+        ["kitty", "bash", "-ic", f"{cmd}; exec bash"],
+        ["terminator", "-x", "bash", "-ic", f"{cmd}; exec bash"],
+        ["xterm", "-e", f"bash -ic '{cmd}; exec bash'"],
     ]
-    for t in terminals:
+
+    for t in candidates:
         if shutil.which(t[0]):
             try:
                 subprocess.Popen(t, stdout=subprocess.DEVNULL,
-                                  stderr=subprocess.DEVNULL)
+                                 stderr=subprocess.DEVNULL)
                 return True
             except Exception:
                 continue
+
+    # WSL / Windows Terminal fallback
+    if shutil.which("wt.exe"):
+        try:
+            subprocess.Popen(
+                ["wt.exe", "wsl", "bash", "-ic", f"{cmd}; exec bash"],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+            return True
+        except Exception:
+            pass
+
+    if shutil.which("wsl.exe"):
+        try:
+            subprocess.Popen(
+                ["wsl.exe", "bash", "-ic", f"{cmd}; exec bash"],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+            return True
+        except Exception:
+            pass
+
     return False
