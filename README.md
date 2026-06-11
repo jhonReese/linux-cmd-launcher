@@ -31,7 +31,7 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.
 ![demo3](assets/demo3.gif)
 - 📋 **Enter to copy** — copies highlighted command to clipboard instantly
 - ▶️ **Shift+Enter to run** — opens command directly in your terminal
-- 
+
 - 🕐 **Recent tab** — tracks your last 8 used commands
 ![demo2](assets/demo2.gif)
 - 🎨 **Apple × DeepMind aesthetic** — dark glass UI, high-contrast text, color-coded categories
