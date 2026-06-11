@@ -7,15 +7,21 @@
 
 ---
 
-## Why CMD Launcher?
-**-Issues related to window focus and hotkey conflicts in the Windows WSLg (Windows Subsystem for Linux GUI) environment.**
-- 解決 Windows WSLg（Windows Subsystem for Linux GUI）的視窗與熱鍵衝突。
+**## Why CMD Launcher?**
 
-Most launchers are _app launchers_ — they find and open programs.
+**Most launchers are _app launchers_ — they find and open programs.
 CMD Launcher solves a different problem: **you know a command exists, but can't remember the exact syntax.**
-It's a personal, always-available cheat sheet with zero-friction copy-and-run.
-- 你知道某個指令存在，但卻記不住確切的語法。這就是CMD Launcher 解決的問題
-就像一份隨時可用的私人速查表，讓你輕鬆複製貼上。
+It's a personal, always-available cheat sheet with zero-friction copy-and-run.**
+**- 你知道某個指令，但卻記不住確切的語法。這就是CMD Launcher 解決的問題
+就像一份隨時可用的私人速查表，讓你輕鬆複製貼上。**
+
+
+**-Issues related to window focus and hotkey conflicts in the Windows WSLg (Windows Subsystem for Linux GUI) environment.**
+**- 解決 Windows WSLg（Windows Subsystem for Linux GUI）的視窗與熱鍵衝突。**
+Linux internal hotkey listening (such as pynput) often fails when crossing operating systems.
+- Linux 內部的熱鍵監聽（如 pynput）在跨 OS 時經常失效
+GTK 3's native window.present() often fails to force the window to the foreground due to permission restrictions of Microsoft Wayland Compositor (Focus Stealing Prevention).
+- GTK 3 原生的 window.present() 常常因為微軟 Wayland 合成器（Compositor）的權限限制，無法成功將視窗強行推至最前端（Focus Stealing Prevention）。
 
 
 | What makes it different | Detail |
