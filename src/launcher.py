@@ -10,6 +10,7 @@ from gi.repository import Gtk, GLib
 
 import signal
 import sys
+import os
 import argparse
 from pathlib import Path
 
@@ -87,6 +88,15 @@ def main():
     library = CommandLibrary()
     window  = LauncherWindow(library)
 
+    # SIGUSR1 可由外部腳本觸發，用來切換顯示/隱藏
+    pid_file = Path("/tmp/cmd-launcher.pid")
+    pid_file.write_text(str(os.getpid()))
+
+    def _toggle_handler(signum, frame):
+        GLib.idle_add(window.toggle)
+
+    signal.signal(signal.SIGUSR1, _toggle_handler)
+
     def on_hotkey():
         GLib.idle_add(window.toggle)
 
@@ -99,12 +109,13 @@ def main():
     print("   Shortcut : Ctrl + Alt + O")
     print("   Quit     : Ctrl + C  or tray → Quit\n")
 
-    window.show_all()
+    window.hide()
     try:
         Gtk.main()
     except KeyboardInterrupt:
         pass
     finally:
+        pid_file.unlink(missing_ok=True)
         hotkey.stop()
         print("\n👋 Stopped.")
 

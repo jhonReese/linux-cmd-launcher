@@ -1,67 +1,80 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "categories": [
     {
       "name": "📁 File & Directory",
       "color": "#4A90E2",
       "commands": [
-        { "cmd": "ls -la",           "desc": "List all files with details" },
-        { "cmd": "pwd",              "desc": "Print working directory" },
-        { "cmd": "cd ~",             "desc": "Go to home directory" },
-        { "cmd": "mkdir -p dir/sub", "desc": "Create nested directories" },
-        { "cmd": "rm -rf dir/",      "desc": "Remove directory recursively" },
-        { "cmd": "cp -r src/ dst/",  "desc": "Copy directory recursively" },
-        { "cmd": "mv old new",       "desc": "Move or rename file" },
-        { "cmd": "find . -name '*.py'", "desc": "Find files by name" },
-        { "cmd": "du -sh *",         "desc": "Show directory sizes" },
-        { "cmd": "tree -L 2",        "desc": "Show directory tree (depth 2)" }
+        { "cmd": "ls -la",                "desc": "List all files with details" },
+        { "cmd": "pwd",                   "desc": "Print working directory" },
+        { "cmd": "cd ~",                  "desc": "Go to home directory" },
+        { "cmd": "mkdir -p dir/sub",      "desc": "Create nested directories" },
+        { "cmd": "rm -rf dir/",           "desc": "Remove directory recursively" },
+        { "cmd": "cp -r src/ dst/",       "desc": "Copy directory recursively" },
+        { "cmd": "mv old new",            "desc": "Move or rename file" },
+        { "cmd": "find . -name '*.py'",   "desc": "Find files by name" },
+        { "cmd": "du -sh *",              "desc": "Show directory sizes" },
+        { "cmd": "tree -L 2",             "desc": "Show directory tree (depth 2)" },
+        { "cmd": "rsync -avz src/ dst/",  "desc": "Sync directories (with progress)" },
+        { "cmd": "lsof +D /path",         "desc": "List open files in directory" }
       ]
     },
     {
       "name": "🔍 Search & Text",
       "color": "#E86A58",
       "commands": [
-        { "cmd": "grep -rn 'pattern' .", "desc": "Recursive search with line numbers" },
-        { "cmd": "grep -i 'text' file",  "desc": "Case-insensitive search" },
-        { "cmd": "sed -i 's/old/new/g' file", "desc": "Replace text in file" },
-        { "cmd": "awk '{print $1}' file",     "desc": "Print first column" },
-        { "cmd": "sort -u file",         "desc": "Sort and remove duplicates" },
-        { "cmd": "wc -l file",           "desc": "Count lines in file" },
-        { "cmd": "cat file | head -20",  "desc": "Show first 20 lines" },
-        { "cmd": "tail -f log.txt",      "desc": "Follow log file in real-time" },
-        { "cmd": "diff file1 file2",     "desc": "Compare two files" }
+        { "cmd": "grep -rn 'pattern' .",        "desc": "Recursive search with line numbers" },
+        { "cmd": "grep -i 'text' file",         "desc": "Case-insensitive search" },
+        { "cmd": "sed -i 's/old/new/g' file",   "desc": "Replace text in file (in-place)" },
+        { "cmd": "awk '{print $1}' file",       "desc": "Print first column" },
+        { "cmd": "sort -u file",                "desc": "Sort and remove duplicates" },
+        { "cmd": "wc -l file",                  "desc": "Count lines in file" },
+        { "cmd": "cat file | head -20",         "desc": "Show first 20 lines" },
+        { "cmd": "tail -f log.txt",             "desc": "Follow log file in real-time" },
+        { "cmd": "diff file1 file2",            "desc": "Compare two files" },
+        { "cmd": "rg 'pattern' --type py",      "desc": "Ripgrep: fast search by file type" },
+        { "cmd": "fd -e py -H .",               "desc": "fd: find .py files (respects .gitignore)" },
+        { "cmd": "jq '.key' file.json",         "desc": "Query a JSON field with jq" },
+        { "cmd": "jq '.[].name' file.json",     "desc": "Extract array field from JSON" },
+        { "cmd": "bat file.py",                 "desc": "Syntax-highlighted file viewer (bat)" }
       ]
     },
     {
       "name": "⚙️ Process & System",
       "color": "#F2A65A",
       "commands": [
-        { "cmd": "ps aux | grep name",   "desc": "Find process by name" },
-        { "cmd": "kill -9 PID",          "desc": "Force kill process" },
-        { "cmd": "top",                  "desc": "Real-time process monitor" },
-        { "cmd": "htop",                 "desc": "Interactive process viewer" },
-        { "cmd": "df -h",                "desc": "Disk usage (human readable)" },
-        { "cmd": "free -h",              "desc": "Memory usage" },
-        { "cmd": "uname -a",             "desc": "System information" },
-        { "cmd": "uptime",               "desc": "System uptime & load" },
-        { "cmd": "lscpu",                "desc": "CPU information" },
-        { "cmd": "systemctl status svc", "desc": "Check service status" }
+        { "cmd": "ps aux | grep name",       "desc": "Find process by name" },
+        { "cmd": "kill -9 PID",              "desc": "Force kill process by PID" },
+        { "cmd": "top",                      "desc": "Real-time process monitor" },
+        { "cmd": "htop",                     "desc": "Interactive process viewer" },
+        { "cmd": "btop",                     "desc": "Modern resource monitor (btop++)" },
+        { "cmd": "df -h",                    "desc": "Disk usage (human readable)" },
+        { "cmd": "free -h",                  "desc": "Memory usage" },
+        { "cmd": "uname -a",                 "desc": "System information" },
+        { "cmd": "uptime",                   "desc": "System uptime and load averages" },
+        { "cmd": "lscpu",                    "desc": "CPU information" },
+        { "cmd": "systemctl status svc",     "desc": "Check service status" },
+        { "cmd": "journalctl -fu svc",       "desc": "Follow systemd service logs" },
+        { "cmd": "dmesg | tail -20",         "desc": "Recent kernel messages" }
       ]
     },
     {
       "name": "🌐 Network",
       "color": "#7ED321",
       "commands": [
-        { "cmd": "curl -I https://url",  "desc": "HTTP headers only" },
-        { "cmd": "wget -O file url",     "desc": "Download file" },
-        { "cmd": "ss -tulnp",            "desc": "Show listening ports" },
-        { "cmd": "netstat -an",          "desc": "All network connections" },
-        { "cmd": "ping -c 4 host",       "desc": "Ping host 4 times" },
-        { "cmd": "traceroute host",      "desc": "Trace network route" },
-        { "cmd": "nmap -sV host",        "desc": "Scan open ports & versions" },
-        { "cmd": "ip addr show",         "desc": "Show IP addresses" },
-        { "cmd": "ssh user@host",        "desc": "SSH connect to host" },
-        { "cmd": "scp file user@host:~", "desc": "Copy file via SSH" }
+        { "cmd": "curl -I https://url",             "desc": "Fetch HTTP headers only" },
+        { "cmd": "curl -s url | jq '.'",            "desc": "Fetch JSON API and pretty-print" },
+        { "cmd": "wget -O file url",                "desc": "Download file from URL" },
+        { "cmd": "ss -tulnp",                       "desc": "Show listening ports" },
+        { "cmd": "netstat -an",                     "desc": "All network connections" },
+        { "cmd": "ping -c 4 host",                  "desc": "Ping host 4 times" },
+        { "cmd": "traceroute host",                 "desc": "Trace network route to host" },
+        { "cmd": "nmap -sV host",                   "desc": "Scan open ports and service versions" },
+        { "cmd": "ip addr show",                    "desc": "Show IP addresses" },
+        { "cmd": "ssh user@host",                   "desc": "SSH connect to remote host" },
+        { "cmd": "scp file user@host:~",            "desc": "Copy file to remote via SSH" },
+        { "cmd": "ssh-keygen -t ed25519 -C 'email'","desc": "Generate Ed25519 SSH key" },
+        { "cmd": "ssh-copy-id user@host",           "desc": "Install SSH key on remote host" }
       ]
     },
     {
@@ -73,10 +86,12 @@
         { "cmd": "docker build -t name .",          "desc": "Build image from Dockerfile" },
         { "cmd": "docker run -it --rm name bash",   "desc": "Run container interactively" },
         { "cmd": "docker-compose up -d",            "desc": "Start services in background" },
-        { "cmd": "docker-compose down -v",          "desc": "Stop & remove volumes" },
+        { "cmd": "docker-compose down -v",          "desc": "Stop services and remove volumes" },
         { "cmd": "docker logs -f container",        "desc": "Follow container logs" },
-        { "cmd": "docker exec -it container bash",  "desc": "Enter running container" },
-        { "cmd": "docker system prune -af",         "desc": "Remove all unused resources" }
+        { "cmd": "docker exec -it container bash",  "desc": "Enter running container shell" },
+        { "cmd": "docker system prune -af",         "desc": "Remove all unused resources" },
+        { "cmd": "docker stats",                    "desc": "Live container resource usage" },
+        { "cmd": "docker inspect container",        "desc": "Show container config and state" }
       ]
     },
     {
@@ -86,23 +101,30 @@
         { "cmd": "git log --oneline --graph",       "desc": "Visual commit history" },
         { "cmd": "git stash pop",                   "desc": "Apply latest stash" },
         { "cmd": "git reset --hard HEAD~1",         "desc": "Undo last commit (destructive)" },
-        { "cmd": "git rebase -i HEAD~3",            "desc": "Interactive rebase last 3" },
+        { "cmd": "git rebase -i HEAD~3",            "desc": "Interactive rebase last 3 commits" },
         { "cmd": "git cherry-pick HASH",            "desc": "Apply specific commit" },
         { "cmd": "git diff --staged",               "desc": "Show staged changes" },
         { "cmd": "git branch -d branch",            "desc": "Delete local branch" },
-        { "cmd": "git remote -v",                   "desc": "Show remote URLs" }
+        { "cmd": "git remote -v",                   "desc": "Show remote URLs" },
+        { "cmd": "git blame -L 10,20 file",         "desc": "Show who changed lines 10-20" },
+        { "cmd": "git bisect start",                "desc": "Start binary search for a bug" },
+        { "cmd": "git worktree add ../path branch", "desc": "Checkout branch in new directory" },
+        { "cmd": "git reflog",                      "desc": "Show all recent HEAD movements" }
       ]
     },
     {
       "name": "🐍 Python / pip",
       "color": "#3776AB",
       "commands": [
-        { "cmd": "python3 -m venv .venv",           "desc": "Create virtual environment" },
-        { "cmd": "source .venv/bin/activate",       "desc": "Activate venv" },
-        { "cmd": "pip install -r requirements.txt", "desc": "Install dependencies" },
-        { "cmd": "pip freeze > requirements.txt",   "desc": "Export dependencies" },
-        { "cmd": "python3 -m http.server 8080",     "desc": "Quick HTTP server" },
-        { "cmd": "python3 -c 'import sys; print(sys.path)'", "desc": "Show Python path" }
+        { "cmd": "python3 -m venv .venv",                    "desc": "Create virtual environment" },
+        { "cmd": "source .venv/bin/activate",                "desc": "Activate venv" },
+        { "cmd": "pip install -r requirements.txt",          "desc": "Install from requirements" },
+        { "cmd": "pip freeze > requirements.txt",            "desc": "Export installed packages" },
+        { "cmd": "pip list --outdated",                      "desc": "Show outdated packages" },
+        { "cmd": "python3 -m http.server 8080",              "desc": "Quick local HTTP server" },
+        { "cmd": "python3 -c 'import sys; print(sys.path)'", "desc": "Show Python module path" },
+        { "cmd": "uvx ruff check .",                         "desc": "Fast Python linter (ruff via uv)" },
+        { "cmd": "python3 -m pytest tests/ -v",              "desc": "Run tests with verbose output" }
       ]
     },
     {
@@ -111,9 +133,11 @@
       "commands": [
         { "cmd": "chmod +x script.sh",    "desc": "Make file executable" },
         { "cmd": "chmod 755 file",        "desc": "rwxr-xr-x permissions" },
-        { "cmd": "chown user:group file", "desc": "Change file owner" },
-        { "cmd": "sudo !!",               "desc": "Re-run last cmd as sudo" },
-        { "cmd": "visudo",                "desc": "Edit sudoers safely" }
+        { "cmd": "chmod 600 ~/.ssh/id*",  "desc": "Secure SSH key permissions" },
+        { "cmd": "chown user:group file", "desc": "Change file owner and group" },
+        { "cmd": "sudo !!",               "desc": "Re-run last command as sudo" },
+        { "cmd": "visudo",                "desc": "Edit sudoers file safely" },
+        { "cmd": "umask 022",             "desc": "Set default permissions mask" }
       ]
     }
   ]

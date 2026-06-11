@@ -30,19 +30,30 @@ if command -v apt-get &>/dev/null; then
         python3-gi python3-gi-cairo \
         gir1.2-gtk-3.0 \
         gir1.2-appindicator3-0.1 \
-        xclip wl-clipboard \
+        xdotool xclip wl-clipboard \
         libgtk-3-dev 2>/dev/null || true
 elif command -v pacman &>/dev/null; then
     sudo pacman -Sy --noconfirm \
         python python-pip python-gobject \
-        gtk3 libappindicator-gtk3 xclip
+        gtk3 libappindicator-gtk3 xdotool xclip
 elif command -v dnf &>/dev/null; then
     sudo dnf install -y \
         python3 python3-pip python3-gobject \
-        gtk3 libappindicator-gtk3 xclip
+        gtk3 libappindicator-gtk3 xdotool xclip
 else
     echo -e "${YELLOW}⚠ Unknown package manager. Install manually:${NC}"
-    echo "  python3, python3-gi, gtk3, xclip"
+    echo "  python3, python3-gi, gtk3, xclip, xdotool"
+fi
+
+# Verify important tools are available (best-effort)
+if ! command -v python3 >/dev/null 2>&1; then
+    echo -e "${YELLOW}⚠ python3 not found in PATH. Please install Python 3 before proceeding.${NC}" >&2
+    exit 1
+fi
+
+# Check xdotool availability and warn if missing (WSLg users will want this)
+if ! command -v xdotool >/dev/null 2>&1; then
+    echo -e "${YELLOW}⚠ xdotool not found. It is recommended for WSLg visibility fixes.${NC}\n  Try: sudo apt install xdotool" >&2 || true
 fi
 
 # ── 2. 安裝程式 ──────────────────────────────────────────
@@ -67,7 +78,17 @@ python3 "$INSTALL_DIR/assets/generate_icon.py" 2>/dev/null || true
 # ── 5. 虛擬環境 ──────────────────────────────────────────
 echo ""
 echo "🐍 Setting up Python virtual environment..."
-/usr/bin/python3.10 -m venv --system-site-packages "$INSTALL_DIR/.venv"
+PYTHON3_BIN=$(command -v python3.12 2>/dev/null \
+    || command -v python3.11 2>/dev/null \
+    || command -v python3.10 2>/dev/null \
+    || command -v python3.9  2>/dev/null \
+    || command -v python3    2>/dev/null || true)
+if [ -z "$PYTHON3_BIN" ]; then
+    echo -e "${YELLOW}✗ Cannot find python3. Please install Python 3 before proceeding.${NC}" >&2
+    exit 1
+fi
+echo "   Using: $PYTHON3_BIN ($("$PYTHON3_BIN" --version))"
+"$PYTHON3_BIN" -m venv --system-site-packages "$INSTALL_DIR/.venv"
 "$INSTALL_DIR/.venv/bin/pip" install --quiet --upgrade pip
 "$INSTALL_DIR/.venv/bin/pip" install --quiet \
     pynput \
@@ -103,7 +124,7 @@ cat > "$AUTOSTART" << DESKTOP
 [Desktop Entry]
 Type=Application
 Name=CMD Launcher
-Comment=Linux Command Cheatsheet (Super+O)
+Comment=Linux Command Cheatsheet (Ctrl+Alt+O)
 Exec=$BIN_PATH
 Icon=$INSTALL_DIR/assets/icon.png
 Hidden=false
@@ -116,7 +137,7 @@ echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━
 echo "  ✅ Installation complete!"
 echo ""
 echo "  ▶  Run now  :  $APP_NAME"
-echo "  ⌨  Shortcut :  Super + O"
+echo "  ⌨  Shortcut :  Ctrl+Alt+O  (WSL) / Super+O  (native Linux)"
 echo "  📝 Config   :  $CFG_DIR/commands.json"
 echo "  🗑  Uninstall:  ./uninstall.sh"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

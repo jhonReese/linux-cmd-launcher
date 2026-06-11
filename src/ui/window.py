@@ -9,6 +9,7 @@ gi.require_version("Gdk", "3.0")
 from gi.repository import Gtk, Gdk, GLib, Pango
 
 import sys
+import subprocess
 import threading
 from pathlib import Path
 
@@ -19,148 +20,178 @@ from src.core.commands import CommandLibrary
 from src.core.clipboard import copy_to_clipboard, run_in_terminal
 
 
-# ── CSS 樣式（整合原 styles.css）────────────────────────────
+# ── CSS 樣式 — Apple Warm Tech Dark ──────────────────────────
+# Color tokens (Apple HIG dark mode, warm-shifted):
+#   Window bg   : #141210   Card L1: #1E1C19   Card L2: #252220
+#   Border      : #282420   Hover  : #2E2B27   Selected: #1B2D47
+#   Text primary: #F5F5F7   Text 2 : #9A9590   Text 3  : #6E6A65
+#   Blue accent : #4A90E2   Coral  : #E86A58   Green   : #34C759
 CSS = """
 * {
-    font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Ubuntu, sans-serif;
+    font-family: "SF Pro Display", "Inter", "Helvetica Neue", Ubuntu, sans-serif;
 }
 
 window#main-window {
-    background-color: rgba(22, 20, 18, 0.97);
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.08);
+    background-color: #141210;
+    border-radius: 14px;
+    border: 1px solid #2A2724;
+}
+
+/* Kill default white backgrounds on GTK containers */
+GtkListBox, list {
+    background-color: transparent;
+}
+#main-window GtkBox,
+#main-window GtkScrolledWindow,
+#main-window GtkViewport {
+    background-color: transparent;
 }
 
 /* ── Search ── */
 #search-entry {
-    background-color: rgba(255,255,255,0.07);
-    border: 1.5px solid rgba(255,255,255,0.12);
+    background-color: #1E1C19;
+    border: 1.5px solid #2E2B27;
     border-radius: 12px;
-    color: #F0EDE8;
+    color: #F5F5F7;
     font-size: 15px;
-    padding: 10px 16px;
+    padding: 12px 16px;
     caret-color: #E86A58;
 }
 #search-entry:focus {
     border-color: #4A90E2;
-    background-color: rgba(255,255,255,0.11);
-    box-shadow: 0 0 0 3px rgba(74,144,226,0.15);
+    background-color: #222018;
 }
 
 /* ── Tab Bar ── */
 #tab-bar {
-    background-color: rgba(255,255,255,0.04);
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    padding: 4px 8px;
+    background-color: #1A1815;
+    border: 1px solid #282420;
+    border-radius: 12px;
+    padding: 5px 8px;
 }
 .tab-btn {
     background-color: transparent;
-    border: none;
+    border: 1px solid transparent;
     border-radius: 8px;
-    color: rgba(255,255,255,0.4);
+    color: #6E6A65;
     font-size: 12px;
-    font-weight: 600;
-    padding: 4px 12px;
-    transition: all 150ms ease;
+    font-weight: 700;
+    padding: 6px 14px;
 }
 .tab-btn:hover {
-    background-color: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.75);
+    background-color: #252220;
+    color: #C8C4BE;
 }
 .tab-btn.active {
-    background-color: rgba(74,144,226,0.2);
-    color: #4A90E2;
+    background-color: #1B2D47;
+    border-color: #2D4A70;
+    color: #F5F5F7;
 }
 
 /* ── Category Header ── */
 .cat-header {
-    color: rgba(255,255,255,0.3);
+    color: #6E6A65;
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 1.5px;
-    padding: 10px 20px 3px 20px;
+    padding: 14px 20px 4px 20px;
 }
 
 /* ── Command Row ── */
+row.cmd-row,
 .cmd-row {
-    border-radius: 10px;
-    padding: 1px 6px;
-    transition: background-color 100ms ease;
+    border-radius: 12px;
+    padding: 14px 16px;
+    border: 1px solid #252220;
+    background-color: #1E1C19;
+    margin-bottom: 6px;
 }
+row.cmd-row:hover,
 .cmd-row:hover {
-    background-color: rgba(255,255,255,0.06);
+    background-color: #252220;
+    border-color: #2E2B27;
 }
-.cmd-row:selected {
-    background-color: rgba(74,144,226,0.15);
+row.cmd-row:selected,
+.cmd-row:selected,
+row.cmd-row:focus,
+.cmd-row:focus {
+    background-color: #1B2D47;
+    border-color: #4A90E2;
 }
 
 .cmd-mono {
-    color: #F0EDE8;
+    color: #F5F5F7;
     font-family: "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 13.5px;
+    font-weight: 600;
 }
 .cmd-desc {
-    color: rgba(255,255,255,0.38);
+    color: #9A9590;
     font-size: 11.5px;
 }
 .cmd-cat-badge {
-    color: rgba(255,255,255,0.25);
+    color: #A8A4A0;
+    background-color: #252220;
+    border: 1px solid #2E2B27;
+    border-radius: 999px;
     font-size: 10px;
-    font-style: italic;
+    font-weight: 700;
+    padding: 2px 8px;
+    margin-top: 4px;
 }
 
 /* ── Action Buttons ── */
 .btn-copy {
-    background-color: rgba(74,144,226,0.12);
-    border: 1px solid rgba(74,144,226,0.25);
-    border-radius: 7px;
+    background-color: #1B2D47;
+    border: 1px solid #2D4A70;
+    border-radius: 8px;
     color: #4A90E2;
     font-size: 11px;
     font-weight: 700;
-    padding: 3px 9px;
+    padding: 5px 10px;
     min-width: 52px;
 }
 .btn-copy:hover {
-    background-color: rgba(74,144,226,0.25);
+    background-color: #243A5C;
 }
 .btn-copy.ok {
-    background-color: rgba(126,211,33,0.15);
-    border-color: rgba(126,211,33,0.4);
-    color: #7ED321;
+    background-color: #1A3020;
+    border-color: #2A4F30;
+    color: #34C759;
 }
 .btn-run {
-    background-color: rgba(232,106,88,0.12);
-    border: 1px solid rgba(232,106,88,0.25);
-    border-radius: 7px;
+    background-color: #3A1E1A;
+    border: 1px solid #5A2E28;
+    border-radius: 8px;
     color: #E86A58;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
-    padding: 3px 9px;
-    min-width: 42px;
+    padding: 5px 12px;
+    min-width: 56px;
 }
 .btn-run:hover {
-    background-color: rgba(232,106,88,0.25);
+    background-color: #4A2820;
 }
 
 /* ── Scrollbar ── */
 scrollbar { background-color: transparent; border: none; }
 scrollbar slider {
-    background-color: rgba(255,255,255,0.12);
+    background-color: #3A3733;
     border-radius: 4px;
-    min-width: 4px;
+    min-width: 5px;
+    min-height: 5px;
 }
 
 /* ── Footer ── */
 #footer {
-    color: rgba(255,255,255,0.18);
+    color: #6E6A65;
     font-size: 10.5px;
     padding: 5px 0 7px 0;
 }
 
 /* ── Count badge ── */
 #count-lbl {
-    color: rgba(255,255,255,0.25);
+    color: #9A9590;
     font-size: 11px;
 }
 """
@@ -174,12 +205,22 @@ class CommandRow(Gtk.ListBoxRow):
         self.cmd_text = cmd
         self.library  = library
         self.get_style_context().add_class("cmd-row")
+        # Force dark background — overrides GTK theme default (white) on ListBoxRow
+        dark = Gdk.RGBA()
+        dark.parse("#1E1C19")
+        self.override_background_color(Gtk.StateFlags.NORMAL, dark)
+        hover = Gdk.RGBA()
+        hover.parse("#252220")
+        self.override_background_color(Gtk.StateFlags.PRELIGHT, hover)
+        sel = Gdk.RGBA()
+        sel.parse("#1B2D47")
+        self.override_background_color(Gtk.StateFlags.SELECTED, sel)
 
-        outer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        outer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         outer.set_margin_start(10)
         outer.set_margin_end(10)
-        outer.set_margin_top(5)
-        outer.set_margin_bottom(5)
+        outer.set_margin_top(10)
+        outer.set_margin_bottom(10)
 
         # 色彩指示條
         bar = Gtk.DrawingArea()
@@ -188,23 +229,28 @@ class CommandRow(Gtk.ListBoxRow):
         outer.pack_start(bar, False, False, 0)
 
         # 文字區塊
-        txt = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1)
+        txt = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
         txt.set_hexpand(True)
 
         cmd_lbl = Gtk.Label(label=cmd, xalign=0)
         cmd_lbl.get_style_context().add_class("cmd-mono")
         cmd_lbl.set_ellipsize(Pango.EllipsizeMode.END)
+        cmd_lbl.set_xalign(0)
+        cmd_lbl.set_line_wrap(False)
         txt.pack_start(cmd_lbl, False, False, 0)
-
-        desc_lbl = Gtk.Label(label=desc, xalign=0)
-        desc_lbl.get_style_context().add_class("cmd-desc")
-        desc_lbl.set_ellipsize(Pango.EllipsizeMode.END)
-        txt.pack_start(desc_lbl, False, False, 0)
 
         if category:
             cat_lbl = Gtk.Label(label=category, xalign=0)
             cat_lbl.get_style_context().add_class("cmd-cat-badge")
+            cat_lbl.set_xalign(0)
             txt.pack_start(cat_lbl, False, False, 0)
+
+        desc_lbl = Gtk.Label(label=desc, xalign=0)
+        desc_lbl.get_style_context().add_class("cmd-desc")
+        desc_lbl.set_ellipsize(Pango.EllipsizeMode.END)
+        desc_lbl.set_line_wrap(True)
+        desc_lbl.set_max_width_chars(65)
+        txt.pack_start(desc_lbl, False, False, 0)
 
         outer.pack_start(txt, True, True, 0)
 
@@ -271,7 +317,7 @@ class LauncherWindow(Gtk.Window):
     # ── 視窗設定 ──────────────────────────────────────────
     def _setup_window(self):
         self.set_title("CMD Launcher")
-        self.set_default_size(720, 580)
+        self.set_default_size(760, 620)
         self.set_resizable(True)
         self.set_decorated(False)
         self.set_keep_above(True)
@@ -281,7 +327,7 @@ class LauncherWindow(Gtk.Window):
 
         screen = Gdk.Screen.get_default()
         def _center_window(w):
-            w.move((screen.get_width()-720)//2, (screen.get_height()-580)//2)
+            w.move((screen.get_width()-760)//2, (screen.get_height()-620)//2)
         self.connect("realize", _center_window)
 
         visual = screen.get_rgba_visual()
@@ -291,14 +337,6 @@ class LauncherWindow(Gtk.Window):
 
         self.connect("key-press-event",  self._on_key)
         self.connect("focus-out-event",  lambda *_: self.hide())
-        self.connect("draw",             self._on_draw)
-
-    def _on_draw(self, widget, cr):
-        """繪製圓角背景（需要 compositing）"""
-        cr.set_source_rgba(0, 0, 0, 0)
-        cr.set_operator(1)  # CLEAR
-        cr.paint()
-        return False
 
     def _apply_css(self):
         p = Gtk.CssProvider()
@@ -311,10 +349,10 @@ class LauncherWindow(Gtk.Window):
     # ── UI 建構 ───────────────────────────────────────────
     def _build_ui(self):
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        root.set_margin_start(14)
-        root.set_margin_end(14)
-        root.set_margin_top(14)
-        root.set_margin_bottom(10)
+        root.set_margin_start(18)
+        root.set_margin_end(18)
+        root.set_margin_top(18)
+        root.set_margin_bottom(14)
         self.add(root)
 
         # ── 標題列 ──
@@ -322,8 +360,8 @@ class LauncherWindow(Gtk.Window):
 
         icon_lbl = Gtk.Label()
         icon_lbl.set_markup(
-            '<span foreground="#E86A58" font="18">⌨</span>'
-            '<span foreground="#F0EDE8" font="15" font_weight="bold"> CMD Launcher</span>'
+            '<span foreground="#E86A58" font="17">⌨</span>'
+            '<span foreground="#F5F5F7" font="15" font_weight="bold"> CMD Launcher</span>'
         )
         icon_lbl.set_hexpand(True)
         icon_lbl.set_xalign(0)
@@ -335,7 +373,9 @@ class LauncherWindow(Gtk.Window):
 
         close = Gtk.Button(label="✕")
         close.set_relief(Gtk.ReliefStyle.NONE)
+        close.get_style_context().add_class("btn-close")
         close.connect("clicked", lambda *_: self.hide())
+        close.set_tooltip_text("Close")
         hdr.pack_end(close, False, False, 0)
         root.pack_start(hdr, False, False, 0)
 
@@ -343,10 +383,10 @@ class LauncherWindow(Gtk.Window):
         self._search = Gtk.SearchEntry()
         self._search.set_name("search-entry")
         self._search.set_placeholder_text(
-            "Search commands…   Esc = close  ·  Enter = copy first result"
+            "Search commands…   ↑↓ navigate  ·  Enter copy  ·  Shift+Enter run  ·  Esc close"
         )
-        self._search.set_margin_top(10)
-        self._search.set_margin_bottom(6)
+        self._search.set_margin_top(14)
+        self._search.set_margin_bottom(10)
         self._search.connect("changed", self._on_search)
         root.pack_start(self._search, False, False, 0)
 
@@ -369,6 +409,7 @@ class LauncherWindow(Gtk.Window):
         scroll = Gtk.ScrolledWindow()
         scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         scroll.set_vexpand(True)
+        self._scroll_adj = scroll.get_vadjustment()
         root.pack_start(scroll, True, True, 0)
 
         self._listbox = Gtk.ListBox()
@@ -380,10 +421,11 @@ class LauncherWindow(Gtk.Window):
         # ── Footer ──
         footer = Gtk.Label(name="footer")
         footer.set_markup(
-            '<span foreground="#999999" font="10.5">'
-            'Super+O  Toggle  ·  Click row to copy  ·  Run ▶ opens terminal  ·  Esc close'
+            '<span foreground="#6E6A65" font="10.5">'
+            'Ctrl+Alt+O toggle  ·  ↑↓ navigate  ·  Enter copy  ·  Shift+Enter run  ·  Esc close'
             '</span>'
         )
+        footer.set_margin_top(10)
         root.pack_end(footer, False, False, 0)
 
     # ── Tab 切換 ──────────────────────────────────────────
@@ -440,7 +482,7 @@ class LauncherWindow(Gtk.Window):
             r.set_selectable(False)
             lbl = Gtk.Label()
             lbl.set_markup(
-                '<span foreground="rgba(255,255,255,0.3)" font="13">'
+                '<span foreground="rgba(255,255,255,0.4)" font="13">'
                 'No recent commands yet</span>'
             )
             lbl.set_margin_top(30)
@@ -450,8 +492,11 @@ class LauncherWindow(Gtk.Window):
             for h in recent:
                 cmd = h["cmd"]
                 row = CommandRow(
-                    cmd=cmd, desc=f"Used: {h['time'][:16].replace('T',' ')}",
-                    color="#F2A65A", library=self.library
+                    cmd=cmd,
+                    desc=f"Used: {h['time'][:16].replace('T',' ')}",
+                    color="#F2A65A",
+                    category="Recent",
+                    library=self.library
                 )
                 self._listbox.add(row)
         self._count_lbl.set_text(f"{len(recent)} recent")
@@ -484,6 +529,29 @@ class LauncherWindow(Gtk.Window):
             self._count_lbl.set_text(f"{len(results)} results")
         self._listbox.show_all()
 
+    # ── 鍵盤導航 ──────────────────────────────────────────
+    def _navigate_list(self, direction: int):
+        """Move selection up (-1) or down (+1) through CommandRow items."""
+        rows = [c for c in self._listbox.get_children()
+                if isinstance(c, CommandRow)]
+        if not rows:
+            return
+        selected = self._listbox.get_selected_row()
+        if not isinstance(selected, CommandRow):
+            target = rows[0] if direction == 1 else rows[-1]
+        else:
+            idx = rows.index(selected)
+            target = rows[(idx + direction) % len(rows)]
+        self._listbox.select_row(target)
+        self._listbox.grab_focus()
+
+        def _scroll_to():
+            alloc = target.get_allocation()
+            if alloc.y >= 0:
+                self._scroll_adj.set_value(max(0, alloc.y - 60))
+            return False
+        GLib.idle_add(_scroll_to)
+
     # ── 事件處理 ──────────────────────────────────────────
     def _on_search(self, entry):
         if self._search_timer:
@@ -507,22 +575,84 @@ class LauncherWindow(Gtk.Window):
             row._on_copy(row.copy_btn)
 
     def _on_key(self, widget, event):
-        if event.keyval == Gdk.KEY_Escape:
-            self.hide(); return True
-        if event.keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
-            # Enter 複製第一個結果
-            for child in self._listbox.get_children():
-                if isinstance(child, CommandRow):
-                    child._on_copy(child.copy_btn)
-                    return True
+        keyval = event.keyval
+        mods   = event.state
+
+        if keyval == Gdk.KEY_Escape:
+            self.hide()
+            return True
+
+        if keyval == Gdk.KEY_Down:
+            self._navigate_list(1)
+            return True
+
+        if keyval == Gdk.KEY_Up:
+            rows = [c for c in self._listbox.get_children()
+                    if isinstance(c, CommandRow)]
+            sel = self._listbox.get_selected_row()
+            if rows and sel == rows[0]:
+                # At top of list — return focus to search entry
+                self._listbox.unselect_all()
+                self._search.grab_focus()
+            else:
+                self._navigate_list(-1)
+            return True
+
+        if keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
+            shift = bool(mods & Gdk.ModifierType.SHIFT_MASK)
+            # Use selected row, or fall back to first CommandRow
+            target = self._listbox.get_selected_row()
+            if not isinstance(target, CommandRow):
+                for child in self._listbox.get_children():
+                    if isinstance(child, CommandRow):
+                        target = child
+                        break
+            if isinstance(target, CommandRow):
+                if shift:
+                    target._on_run(None)   # Shift+Enter → Run in terminal
+                else:
+                    target._on_copy(target.copy_btn)  # Enter → Copy
+            return True
+
         return False
 
     def toggle(self):
-        if self.get_visible():
+        visible = self.get_visible()
+        active  = self.is_active()
+        if visible and active:
             self.hide()
-        else:
-            self._search.set_text("")
-            self._show_tab("all")
-            self.show_all()
+        elif visible and not active:
             self.present()
+            self.grab_focus()
             GLib.idle_add(self._search.grab_focus)
+        else:
+            self._do_show()
+
+    def _do_show(self):
+        self._search.set_text("")
+        self._show_tab("all")
+        self.show_all()
+        self.present()
+        self.grab_focus()
+        GLib.idle_add(self._search.grab_focus)
+        GLib.timeout_add(100, self._do_raise)
+        return False
+
+    def _do_raise(self):
+        self.set_keep_above(True)
+        self.present()
+        window = self.get_window()
+        if window is not None:
+            try:
+                if hasattr(window, "get_xid"):
+                    xid = window.get_xid()
+                    if xid:
+                        subprocess.Popen([
+                            "xdotool", "windowactivate", "--sync", str(xid)
+                        ])
+            except (FileNotFoundError, OSError):
+                pass
+            except Exception:
+                pass
+        GLib.timeout_add(300, lambda: self.set_keep_above(False) or False)
+        return False

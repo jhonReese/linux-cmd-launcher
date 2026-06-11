@@ -59,20 +59,53 @@ class CommandLibrary:
         return self._history[:8]
 
     def search(self, query: str) -> List[Dict]:
-        if not query.strip():
+        import difflib
+        q = query.strip()
+        if not q:
             return []
-        q = query.lower()
+        tokens = q.lower().split()
         results = []
         for cat in self.categories:
             for item in cat.get("commands", []):
-                score = 0
-                if q in item["cmd"].lower():   score += 2
-                if q in item["desc"].lower():  score += 1
-                if score > 0:
+                cmd_lower  = item["cmd"].lower()
+                desc_lower = item["desc"].lower()
+                score: float = 0.0
+
+                # Substring scoring per token
+                for token in tokens:
+                    if token in cmd_lower:
+                        score += 2.0
+                    elif token in desc_lower:
+                        score += 1.0
+
+                # Multi-word: all tokens must match somewhere
+                if len(tokens) > 1:
+                    if not all(
+                        t in cmd_lower or t in desc_lower for t in tokens
+                    ):
+                        score = 0.0
+
+                # Fuzzy fallback when no substring hit
+                # Compare against cmd alone first (short strings give better ratios)
+                if score == 0.0:
+                    cmd_ratio = difflib.SequenceMatcher(
+                        None, q.lower(), cmd_lower
+                    ).ratio()
+                    if cmd_ratio > 0.6:
+                        score = cmd_ratio
+                    else:
+                        combined = cmd_lower + " " + desc_lower
+                        ratio = difflib.SequenceMatcher(
+                            None, q.lower(), combined
+                        ).ratio()
+                        if ratio > 0.45:
+                            score = ratio
+
+                if score > 0.0:
                     results.append({
                         **item,
                         "category": cat["name"],
                         "color":    cat.get("color", "#888888"),
-                        "score":    score
+                        "score":    score,
                     })
         return sorted(results, key=lambda x: x["score"], reverse=True)
