@@ -10,7 +10,7 @@
 **## Why CMD Launcher?**
 
 **Most launchers are _app launchers_ — they find and open programs.
-CMD Launcher solves a different problem: **you know a command exists, but can't remember the exact syntax.
+CMD Launcher solves a different problem: you know a command exists, but can't remember the exact syntax.
 It's a personal, always-available cheat sheet with zero-friction copy-and-run.**
 - 你知道某個指令，但卻記不住確切的語法。這就是CMD Launcher 解決的問題
 就像一份隨時可用的私人速查表，讓你輕鬆複製貼上。
@@ -46,10 +46,10 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.**
 
 - 🕐 **Recent tab** — tracks your last 8 used commands
 ![demo2](assets/demo2.gif)
-- 🎨 **Apple × DeepMind aesthetic** — dark glass UI, high-contrast text, color-coded categories
+- 🎨 **Aesthetic** — dark glass UI, high-contrast text, color-coded categories
 - 📝 **Fully customizable** — edit `~/.config/cmd-launcher/commands.json`
 - 🔒 **Privacy-first** — no keylogging beyond `Ctrl+Alt+O`, no network, no data collection
-- 📦 **70+ built-in commands** — covering files, git, docker, network, python, permissions
+- 📦 **60+ built-in commands** — covering files, git, docker, network, python, permissions
 
 ---
 
