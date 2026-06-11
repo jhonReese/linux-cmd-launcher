@@ -8,12 +8,15 @@
 ---
 
 ## Why CMD Launcher?
-**-Issues related to window focus and hotkey conflicts in the Windows WSLg (Windows Subsystem for Linux GUI) environment.**
-解決 Windows WSLg（Windows Subsystem for Linux GUI）的視窗與熱鍵衝突。
+> **-Issues related to window focus and hotkey conflicts in the Windows WSLg (Windows Subsystem for Linux GUI) environment.**
+> 解決 Windows WSLg（Windows Subsystem for Linux GUI）的視窗與熱鍵衝突。
 
 Most launchers are _app launchers_ — they find and open programs.
 CMD Launcher solves a different problem: **you know a command exists, but can't remember the exact syntax.**
 It's a personal, always-available cheat sheet with zero-friction copy-and-run.
+你知道某個指令存在，但卻記不住確切的語法。這就是CMD Launcher 解決的問題
+就像一份隨時可用的私人速查表，讓你輕鬆複製貼上。
+
 
 | What makes it different | Detail |
 |---|---|
