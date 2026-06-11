@@ -1,4 +1,3 @@
-<img width="782" height="656" alt="Image" src="https://github.com/user-attachments/assets/7402c4a5-6cd1-4118-8313-b4c07f2ea903" />
 # cmd-launcher
 
 **You know the command exists. You just can't remember the exact flags.
@@ -29,13 +28,13 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.
 
 ---
 
-![demo](assets/錄製內容 2026-06-11 221833_2.gif)
+
 
 - 🚀 **One-key toggle** — `Ctrl+Alt+O` (WSL) / `Super+O` (native Linux)
 - ⌨️ **Full keyboard navigation** — `↑↓` move through results; never leave the keyboard
 
 - 🔍 **Fuzzy + multi-word search** — typos and partial queries both work
-![demo](https://github.com/user-attachments/assets/錄製內容 2026-06-11 221833_2.gif)
+
 
 
 
