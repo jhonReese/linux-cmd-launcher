@@ -69,6 +69,12 @@ if [ -f "$PIDFILE" ]; then
 fi
 
 # 啟動新 process
+if [ "${USE_SYSTEM_PYTHON:-0}" = "1" ]; then
+    PYCMD="$PYEXE"
+else
+    PYCMD="$VENV/bin/python3"
+fi
+
 nohup env -i \
     HOME=$HOME \
     PATH=/usr/bin:/bin \
@@ -76,12 +82,6 @@ nohup env -i \
     WAYLAND_DISPLAY=$WAYLAND_DISPLAY \
     XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR \
     PYTHONPATH="$SRC:/usr/lib/python3/dist-packages:$VENV/lib/python3.10/site-packages" \
-    if [ "${USE_SYSTEM_PYTHON:-0}" = "1" ]; then
-        PYCMD="$PYEXE"
-    else
-        PYCMD="$VENV/bin/python3"
-    fi
-
     "$PYCMD" -S \
     "$SRC/launcher.py" >> "$LOGFILE" 2>&1 &
 

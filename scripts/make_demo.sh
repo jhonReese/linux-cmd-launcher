@@ -21,9 +21,11 @@ else
 fi
 # Try to detect display for X11/WSLg
 DISPLAY_VAR=${DISPLAY:-:0}
-echo "Recording ${DURATION}s from display ${DISPLAY_VAR}..."
-ffmpeg -y -video_size ${WIDTH}x? -framerate $FPS -f x11grab -i "$DISPLAY_VAR" -t $DURATION -vcodec libx264 -preset ultrafast "$TMP_MP4" || {
-  echo "ffmpeg recording failed. Try adjusting DISPLAY or run from a graphical session." >&2
+# Fallback to X11 grab size if possible; note WSLg may require a window compositor.
+VIDEO_SIZE="${WIDTH}x480"
+echo "Recording ${DURATION}s from display ${DISPLAY_VAR} with size ${VIDEO_SIZE}..."
+ffmpeg -y -video_size "$VIDEO_SIZE" -framerate $FPS -f x11grab -i "$DISPLAY_VAR" -t $DURATION -vcodec libx264 -preset ultrafast "$TMP_MP4" || {
+  echo "ffmpeg recording failed. Try adjusting DISPLAY, use a supported graphical session, or set a valid capture size." >&2
   exit 2
 }
 # Convert to GIF
