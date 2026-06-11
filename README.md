@@ -85,10 +85,32 @@ Each group takes a `name`, a `color` (used as the category accent), and a list o
 - Only the `Super + O` key combination is intercepted — no other keystrokes are logged or transmitted
 - All data remains local
 
+- Linux (X11 or Wayland)
+- Python 3.8+
+- GTK 3
+
+
 ---
 
-## Notes
+## WSL2 / WSLg Setup
 
-Tested primarily on WSL2 with WSLg (XWayland). The UI uses Cairo for rendering to avoid compositing dependencies, which makes it stable in environments where a compositor is not guaranteed.
+Since `pynput` cannot listen globally in WSLg, the hotkey is triggered from Windows via AutoHotkey.
 
-If the panel doesn't appear on first launch, check that `xdotool` and `python3-gi` are installed.
+### Requirements
+- [AutoHotkey v2](https://www.autohotkey.com/)
+- WSL2 with WSLg enabled
+
+### AutoHotkey Script
+Create a file `cmd-launcher.ahk` on Windows:
+
+```ahk
+#Requires AutoHotkey v2.0
+^!o:: {
+    RunWait("wsl.exe bash -c `"kill -SIGUSR1 $(cat /tmp/cmd-launcher.pid)`"",,  "Hide")
+}
+```
+
+Run this script at Windows startup via Task Scheduler or Startup folder.
+
+### Known Limitation
+On WSLg (Wayland), the window appears in the taskbar when toggled but may not automatically raise to foreground. This is a compositor-level restriction — clicking the taskbar icon will bring it up.

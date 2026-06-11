@@ -550,12 +550,42 @@ class LauncherWindow(Gtk.Window):
                     return True
         return False
 
+
     def toggle(self):
-        if self.get_visible():
+        visible = self.get_visible()
+        active  = self.is_active()
+        print(f"[toggle] visible={visible} active={active}", flush=True)
+        if visible and active:
+            # 視窗在前景 → 隱藏
             self.hide()
-        else:
-            self._search.set_text("")
-            self._show_tab("all")
-            self.show_all()
+        elif visible and not active:
+            # 視窗存在但在背景 → 拉到前景
             self.present()
+            self.grab_focus()
             GLib.idle_add(self._search.grab_focus)
+        else:
+            # 視窗隱藏 → 顯示
+            self._do_show()
+
+    def _do_show(self):
+        self._search.set_text("")
+        self._show_tab("all")
+        self.show_all()
+        self.present()
+        self.grab_focus()
+        GLib.idle_add(self._search.grab_focus)
+        # WSLg workaround: xdotool 強制拉前景
+        GLib.timeout_add(100, self._do_raise)
+        return False
+
+    def _do_raise(self):
+        """
+        WSLg/Wayland known limitation:
+        present(), set_keep_above(), xdotool are all ineffective.
+        Window appears in taskbar but compositor controls focus.
+        TODO: revisit when WSLg exposes xdg-activation protocol support.
+        """
+        self.set_keep_above(True)
+        self.present()
+        GLib.timeout_add(300, lambda: self.set_keep_above(False) or False)
+        return False

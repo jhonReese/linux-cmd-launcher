@@ -74,15 +74,33 @@ def _status_menu(icon, button, time):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        prog="cmd-launcher",
-        description="Linux Command Cheatsheet Launcher"
-    )
-    parser.add_argument("--version", action="version",
-                        version=f"cmd-launcher {__version__}")
+    parser = argparse.ArgumentParser(...)
     parser.parse_args()
 
     signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+    # ✅ 先建立 window
+    library = CommandLibrary()
+    window  = LauncherWindow(library)
+
+    # ✅ 再註冊 SIGUSR1（此時 window 已存在）
+    import os
+    pid_file = Path("/tmp/cmd-launcher.pid")
+    pid_file.write_text(str(os.getpid()))
+
+    def _toggle_handler(signum, frame):
+        GLib.idle_add(window.toggle)
+
+    signal.signal(signal.SIGUSR1, _toggle_handler)
+
+
+    def on_hotkey():
+        GLib.idle_add(window.toggle)
+
+    hotkey = HotkeyListener(callback=on_hotkey)
+    hotkey.start()
+    ...
+
 
     library = CommandLibrary()
     window  = LauncherWindow(library)
@@ -99,14 +117,16 @@ def main():
     print("   Shortcut : Ctrl + Alt + O")
     print("   Quit     : Ctrl + C  or tray → Quit\n")
 
-    window.show_all()
+    window.hide()  # 啟動時隱藏，等待快捷鍵喚醒
     try:
         Gtk.main()
     except KeyboardInterrupt:
         pass
     finally:
+        pid_file.unlink(missing_ok=True)
         hotkey.stop()
         print("\n👋 Stopped.")
+
 
 
 if __name__ == "__main__":
