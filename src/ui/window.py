@@ -181,6 +181,24 @@ scrollbar slider {
     min-width: 5px;
     min-height: 5px;
 }
+/* ── 強制覆蓋系統主題白底 ── */
+list {
+    background-color: #1C1A15;
+    background-image: none;
+}
+listboxrow {
+    background-color: transparent;
+    background-image: none;
+}
+listboxrow:hover {
+    background-color: rgba(255,255,255,0.07);
+    background-image: none;
+}
+listboxrow:selected,
+listboxrow:selected:focus {
+    background-color: rgba(74,144,226,0.20);
+    background-image: none;
+}
 
 /* ── Footer ── */
 #footer {
@@ -343,7 +361,7 @@ class LauncherWindow(Gtk.Window):
         p.load_from_data(CSS.encode("utf-8"))
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(), p,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            Gtk.STYLE_PROVIDER_PRIORITY_USER
         )
 
     # ── UI 建構 ───────────────────────────────────────────
@@ -615,6 +633,7 @@ class LauncherWindow(Gtk.Window):
             return True
 
         return False
+
 
     def toggle(self):
         visible = self.get_visible()

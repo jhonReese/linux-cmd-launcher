@@ -1,4 +1,4 @@
-# ⌨️ CMD Launcher
+# cmd-launcher
 
 > **One-key command cheatsheet for Linux & WSLg.**
 > Press `Ctrl+Alt+O` (WSL/WSLg) or `Super+O` (native Linux) to instantly pop up
@@ -24,7 +24,7 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.
 
 ---
 
-## ✨ Features
+<img src="assets/image.png" width="720" alt="cmd-launcher panel" />
 
 - 🚀 **One-key toggle** — `Ctrl+Alt+O` (WSL) / `Super+O` (native Linux)
 - ⌨️ **Full keyboard navigation** — `↑↓` move through results; never leave the keyboard
@@ -54,7 +54,31 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.
 
 ---
 
-## 📦 Quick Install
+## Why
+
+Terminal muscle memory has limits. I kept a text file of commands I use across ML experiments, git workflows, and system maintenance — and I kept forgetting where it was. This is the structured version of that file, with a global hotkey and fuzzy search.
+
+---
+
+## Features
+
+- **Global toggle** — `Super + O` shows and hides the panel from any context
+- **Fuzzy search** — filters commands in real-time as you type
+- **One-click copy** — click any row to copy the command to clipboard
+- **Fully local** — no network requests, no keylogging beyond the registered hotkey combo
+- **JSON-driven config** — add, remove, or reorganize commands without touching the code
+
+---
+
+## Requirements
+
+- Linux (X11 or Wayland via XWayland)
+- Python 3.8+
+- GTK 3
+
+---
+
+## Installation
 
 ```bash
 git clone https://github.com/jhonReese/linux-cmd-launcher.git
@@ -209,7 +233,9 @@ cmd-launcher
 
 ---
 
-## 📋 Requirements
+- No API keys or credentials are stored anywhere
+- Only the `Super + O` key combination is intercepted — no other keystrokes are logged or transmitted
+- All data remains local
 
 - Linux (X11 or Wayland/WSLg)
 - Python 3.9+
