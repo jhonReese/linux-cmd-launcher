@@ -35,7 +35,8 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.
 - ⌨️ **Full keyboard navigation** — `↑↓` move through results; never leave the keyboard
 
 - 🔍 **Fuzzy + multi-word search** — typos and partial queries both work
-<img width="782" height="656" alt="Image" src="https://github.com/user-attachments/assets/7ba53667-f160-4d6b-b6e0-08270fd4477d" />
+![demo](https://github.com/user-attachments/assets/錄製內容 2026-06-11 221833_2.gif)
+
 
 
 - 📋 **Enter to copy** — copies highlighted command to clipboard instantly
