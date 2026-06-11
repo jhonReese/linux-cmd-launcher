@@ -1,4 +1,4 @@
-![demo](assets/demo.gif)
+![demo](assets/錄製內容 2026-06-11 221634_1.gif)
 # cmd-launcher
 
 **You know the command exists. You just can't remember the exact flags.
@@ -29,7 +29,7 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.
 
 ---
 
-<img src="assets/image2.png" width="720" alt="cmd-launcher panel" />
+![demo](assets/錄製內容 2026-06-11 221833_2.gif)
 
 - 🚀 **One-key toggle** — `Ctrl+Alt+O` (WSL) / `Super+O` (native Linux)
 - ⌨️ **Full keyboard navigation** — `↑↓` move through results; never leave the keyboard
@@ -38,7 +38,7 @@ It's a personal, always-available cheat sheet with zero-friction copy-and-run.
 - ▶️ **Shift+Enter to run** — opens command directly in your terminal
 
 
-<img src="assets/image1.png" width="720" alt="cmd-launcher panel" />
+![demo](assets/錄製內容 2026-06-11 222002_3.gif)
 - 🕐 **Recent tab** — tracks your last 8 used commands
 - 🎨 **Apple × DeepMind aesthetic** — dark glass UI, high-contrast text, color-coded categories
 - 📝 **Fully customizable** — edit `~/.config/cmd-launcher/commands.json`
