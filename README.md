@@ -12,12 +12,12 @@
 **Most launchers are _app launchers_ — they find and open programs.
 CMD Launcher solves a different problem: **you know a command exists, but can't remember the exact syntax.**
 It's a personal, always-available cheat sheet with zero-friction copy-and-run.**
-**- 你知道某個指令，但卻記不住確切的語法。這就是CMD Launcher 解決的問題
-就像一份隨時可用的私人速查表，讓你輕鬆複製貼上。**
+- 你知道某個指令，但卻記不住確切的語法。這就是CMD Launcher 解決的問題
+就像一份隨時可用的私人速查表，讓你輕鬆複製貼上。
 
 
 **-Issues related to window focus and hotkey conflicts in the Windows WSLg (Windows Subsystem for Linux GUI) environment.**
-**- 解決 Windows WSLg（Windows Subsystem for Linux GUI）的視窗與熱鍵衝突。**
+- 解決 Windows WSLg（Windows Subsystem for Linux GUI）的視窗與熱鍵衝突。
 Linux internal hotkey listening (such as pynput) often fails when crossing operating systems.
 - Linux 內部的熱鍵監聽（如 pynput）在跨 OS 時經常失效
 GTK 3's native window.present() often fails to force the window to the foreground due to permission restrictions of Microsoft Wayland Compositor (Focus Stealing Prevention).
