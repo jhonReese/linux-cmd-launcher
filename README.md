@@ -1,4 +1,4 @@
-![demo](assets/錄製內容 2026-06-11 221634_1.gif)
+<img width="782" height="656" alt="Image" src="https://github.com/user-attachments/assets/7402c4a5-6cd1-4118-8313-b4c07f2ea903" />
 # cmd-launcher
 
 **You know the command exists. You just can't remember the exact flags.
