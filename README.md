@@ -1,7 +1,6 @@
 # cmd-launcher
 ![demo1](assets/demo1.gif)
-> **-Issues related to window focus and hotkey conflicts in the Windows WSLg (Windows Subsystem for Linux GUI) environment.**
-解決 Windows WSLg（Windows Subsystem for Linux GUI）的視窗與熱鍵衝突。
+
 > **One-key command cheatsheet for Linux & WSLg.**
 > Press `Ctrl+Alt+O` (WSL/WSLg) or `Super+O` (native Linux) to instantly pop up
 > a fuzzy-searchable, keyboard-navigable command palette — no mouse required.
@@ -9,6 +8,8 @@
 ---
 
 ## Why CMD Launcher?
+**-Issues related to window focus and hotkey conflicts in the Windows WSLg (Windows Subsystem for Linux GUI) environment.**
+解決 Windows WSLg（Windows Subsystem for Linux GUI）的視窗與熱鍵衝突。
 
 Most launchers are _app launchers_ — they find and open programs.
 CMD Launcher solves a different problem: **you know a command exists, but can't remember the exact syntax.**
