@@ -20,105 +20,119 @@ from src.core.commands import CommandLibrary
 from src.core.clipboard import copy_to_clipboard, run_in_terminal
 
 
-# ── CSS 樣式（整合原 styles.css）────────────────────────────
+# ── CSS 樣式 — Apple Warm Tech Dark ──────────────────────────
+# Color tokens (Apple HIG dark mode, warm-shifted):
+#   Window bg   : #141210   Card L1: #1E1C19   Card L2: #252220
+#   Border      : #282420   Hover  : #2E2B27   Selected: #1B2D47
+#   Text primary: #F5F5F7   Text 2 : #9A9590   Text 3  : #6E6A65
+#   Blue accent : #4A90E2   Coral  : #E86A58   Green   : #34C759
 CSS = """
 * {
-    font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", Ubuntu, sans-serif;
+    font-family: "SF Pro Display", "Inter", "Helvetica Neue", Ubuntu, sans-serif;
 }
 
 window#main-window {
-    background-color: rgba(22, 20, 18, 0.97);
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 28px 80px rgba(0,0,0,0.32);
+    background-color: #141210;
+    border-radius: 14px;
+    border: 1px solid #2A2724;
 }
 
-#main-window GtkBox {
+/* Kill default white backgrounds on GTK containers */
+GtkListBox, list {
+    background-color: transparent;
+}
+#main-window GtkBox,
+#main-window GtkScrolledWindow,
+#main-window GtkViewport {
     background-color: transparent;
 }
 
 /* ── Search ── */
 #search-entry {
-    background-color: rgba(255,255,255,0.07);
-    border: 1.5px solid rgba(255,255,255,0.12);
-    border-radius: 14px;
-    color: #F0EDE8;
+    background-color: #1E1C19;
+    border: 1.5px solid #2E2B27;
+    border-radius: 12px;
+    color: #F5F5F7;
     font-size: 15px;
     padding: 12px 16px;
     caret-color: #E86A58;
 }
 #search-entry:focus {
     border-color: #4A90E2;
-    background-color: rgba(255,255,255,0.11);
-    box-shadow: 0 0 0 3px rgba(74,144,226,0.15);
+    background-color: #222018;
 }
 
 /* ── Tab Bar ── */
 #tab-bar {
-    background-color: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.09);
-    border-radius: 14px;
-    padding: 6px 10px;
+    background-color: #1A1815;
+    border: 1px solid #282420;
+    border-radius: 12px;
+    padding: 5px 8px;
 }
 .tab-btn {
-    background-color: rgba(255,255,255,0.05);
+    background-color: transparent;
     border: 1px solid transparent;
-    border-radius: 10px;
-    color: rgba(255,255,255,0.55);
+    border-radius: 8px;
+    color: #6E6A65;
     font-size: 12px;
     font-weight: 700;
     padding: 6px 14px;
-    transition: all 150ms ease;
 }
 .tab-btn:hover {
-    background-color: rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.9);
+    background-color: #252220;
+    color: #C8C4BE;
 }
 .tab-btn.active {
-    background-color: rgba(28, 41, 60, 0.65);
-    border-color: rgba(74,144,226,0.4);
-    color: #FFFFFF;
+    background-color: #1B2D47;
+    border-color: #2D4A70;
+    color: #F5F5F7;
 }
 
 /* ── Category Header ── */
 .cat-header {
-    color: rgba(255,255,255,0.60);
+    color: #6E6A65;
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 1.5px;
-    padding: 10px 20px 3px 20px;
+    padding: 14px 20px 4px 20px;
 }
 
 /* ── Command Row ── */
+row.cmd-row,
 .cmd-row {
-    border-radius: 18px;
-    padding: 16px 16px;
-    transition: background-color 120ms ease, transform 120ms ease;
-    border: 1px solid rgba(255,255,255,0.12);
-    background-color: rgba(255,255,255,0.04);
-    margin-bottom: 8px;
+    border-radius: 12px;
+    padding: 14px 16px;
+    border: 1px solid #252220;
+    background-color: #1E1C19;
+    margin-bottom: 6px;
 }
+row.cmd-row:hover,
 .cmd-row:hover {
-    background-color: rgba(255,255,255,0.14);
+    background-color: #252220;
+    border-color: #2E2B27;
 }
-.cmd-row:selected {
-    background-color: rgba(74,144,226,0.18);
+row.cmd-row:selected,
+.cmd-row:selected,
+row.cmd-row:focus,
+.cmd-row:focus {
+    background-color: #1B2D47;
+    border-color: #4A90E2;
 }
 
 .cmd-mono {
-    color: #F7F5F2;
+    color: #F5F5F7;
     font-family: "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
     font-size: 13.5px;
     font-weight: 600;
 }
 .cmd-desc {
-    color: rgba(255,255,255,0.75);
+    color: #9A9590;
     font-size: 11.5px;
 }
 .cmd-cat-badge {
-    color: rgba(255,255,255,0.85);
-    background-color: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.08);
+    color: #A8A4A0;
+    background-color: #252220;
+    border: 1px solid #2E2B27;
     border-radius: 999px;
     font-size: 10px;
     font-weight: 700;
@@ -128,54 +142,56 @@ window#main-window {
 
 /* ── Action Buttons ── */
 .btn-copy {
-    background-color: rgba(74,144,226,0.12);
-    border: 1px solid rgba(74,144,226,0.25);
-    border-radius: 7px;
+    background-color: #1B2D47;
+    border: 1px solid #2D4A70;
+    border-radius: 8px;
     color: #4A90E2;
     font-size: 11px;
     font-weight: 700;
-    padding: 3px 9px;
+    padding: 5px 10px;
     min-width: 52px;
 }
 .btn-copy:hover {
-    background-color: rgba(74,144,226,0.25);
+    background-color: #243A5C;
 }
 .btn-copy.ok {
-    background-color: rgba(126,211,33,0.15);
-    border-color: rgba(126,211,33,0.4);
-    color: #7ED321;
+    background-color: #1A3020;
+    border-color: #2A4F30;
+    color: #34C759;
 }
 .btn-run {
-    background-color: rgba(232,106,88,0.14);
-    border: 1px solid rgba(232,106,88,0.28);
+    background-color: #3A1E1A;
+    border: 1px solid #5A2E28;
     border-radius: 8px;
     color: #E86A58;
     font-size: 12px;
     font-weight: 700;
-    padding: 6px 12px;
+    padding: 5px 12px;
     min-width: 56px;
 }
 .btn-run:hover {
-    background-color: rgba(232,106,88,0.28);
+    background-color: #4A2820;
 }
+
 /* ── Scrollbar ── */
 scrollbar { background-color: transparent; border: none; }
 scrollbar slider {
-    background-color: rgba(255,255,255,0.12);
+    background-color: #3A3733;
     border-radius: 4px;
-    min-width: 4px;
+    min-width: 5px;
+    min-height: 5px;
 }
 
 /* ── Footer ── */
 #footer {
-    color: rgba(255,255,255,0.50);
+    color: #6E6A65;
     font-size: 10.5px;
     padding: 5px 0 7px 0;
 }
 
 /* ── Count badge ── */
 #count-lbl {
-    color: rgba(255,255,255,0.60);
+    color: #9A9590;
     font-size: 11px;
 }
 """
@@ -189,6 +205,16 @@ class CommandRow(Gtk.ListBoxRow):
         self.cmd_text = cmd
         self.library  = library
         self.get_style_context().add_class("cmd-row")
+        # Force dark background — overrides GTK theme default (white) on ListBoxRow
+        dark = Gdk.RGBA()
+        dark.parse("#1E1C19")
+        self.override_background_color(Gtk.StateFlags.NORMAL, dark)
+        hover = Gdk.RGBA()
+        hover.parse("#252220")
+        self.override_background_color(Gtk.StateFlags.PRELIGHT, hover)
+        sel = Gdk.RGBA()
+        sel.parse("#1B2D47")
+        self.override_background_color(Gtk.StateFlags.SELECTED, sel)
 
         outer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         outer.set_margin_start(10)
@@ -311,14 +337,6 @@ class LauncherWindow(Gtk.Window):
 
         self.connect("key-press-event",  self._on_key)
         self.connect("focus-out-event",  lambda *_: self.hide())
-        self.connect("draw",             self._on_draw)
-
-    def _on_draw(self, widget, cr):
-        """繪製圓角背景（需要 compositing）"""
-        cr.set_source_rgba(0, 0, 0, 0)
-        cr.set_operator(1)  # CLEAR
-        cr.paint()
-        return False
 
     def _apply_css(self):
         p = Gtk.CssProvider()
@@ -342,8 +360,8 @@ class LauncherWindow(Gtk.Window):
 
         icon_lbl = Gtk.Label()
         icon_lbl.set_markup(
-            '<span foreground="#E86A58" font="18">⌨</span>'
-            '<span foreground="#F0EDE8" font="15" font_weight="bold"> CMD Launcher</span>'
+            '<span foreground="#E86A58" font="17">⌨</span>'
+            '<span foreground="#F5F5F7" font="15" font_weight="bold"> CMD Launcher</span>'
         )
         icon_lbl.set_hexpand(True)
         icon_lbl.set_xalign(0)
@@ -403,7 +421,7 @@ class LauncherWindow(Gtk.Window):
         # ── Footer ──
         footer = Gtk.Label(name="footer")
         footer.set_markup(
-            '<span foreground="#999999" font="10.5">'
+            '<span foreground="#6E6A65" font="10.5">'
             'Ctrl+Alt+O toggle  ·  ↑↓ navigate  ·  Enter copy  ·  Shift+Enter run  ·  Esc close'
             '</span>'
         )

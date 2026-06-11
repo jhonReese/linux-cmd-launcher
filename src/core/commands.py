@@ -86,13 +86,20 @@ class CommandLibrary:
                         score = 0.0
 
                 # Fuzzy fallback when no substring hit
+                # Compare against cmd alone first (short strings give better ratios)
                 if score == 0.0:
-                    combined = cmd_lower + " " + desc_lower
-                    ratio = difflib.SequenceMatcher(
-                        None, q.lower(), combined
+                    cmd_ratio = difflib.SequenceMatcher(
+                        None, q.lower(), cmd_lower
                     ).ratio()
-                    if ratio > 0.45:
-                        score = ratio  # float < 1.0, always ranks below exact hits
+                    if cmd_ratio > 0.6:
+                        score = cmd_ratio
+                    else:
+                        combined = cmd_lower + " " + desc_lower
+                        ratio = difflib.SequenceMatcher(
+                            None, q.lower(), combined
+                        ).ratio()
+                        if ratio > 0.45:
+                            score = ratio
 
                 if score > 0.0:
                     results.append({
