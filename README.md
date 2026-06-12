@@ -7,7 +7,7 @@
 
 ---
 
-**## Why CMD Launcher?**
+## Why CMD Launcher?
 
 **Most launchers are _app launchers_ — they find and open programs.
 CMD Launcher solves a different problem: you know a command exists, but can't remember the exact syntax.
